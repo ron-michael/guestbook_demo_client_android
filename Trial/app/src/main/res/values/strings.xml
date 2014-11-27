@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GuestBook</string>
+    <string name="title_message_detail">Message Detail</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_add_message">New Post</string>
+    <string name="action_settings">Settings</string>
+    <string name="label_name">Name</string>
+    <string name="label_message">Message</string>
+    <string name="label_photo">Photo</string>
+    <string name="chooser_select_gallery_item">Select a photo</string>
+    <string name="confirmation_exit_app_message">Are you sure you want to exit?</string>
+    <string name="confirmation_leave_new_post_message">Are you sure you want to leave this unsaved message?</string>
+    <string name="notification_network_none_title">No network</string>
+    <string name="notification_network_none_message">You are not connected to any network. Please check your connectivity and try again.</string>
+    <string name="title_activity_new_message">NewMessage</string>
+    <string name="setting_server_url">Server URL</string>
+    <string name="setting_server_url_title">Server Settings</string>
+    <string name="setting_server_url_summary">URL to access the WebService</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

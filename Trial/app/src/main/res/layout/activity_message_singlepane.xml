@@ -1,0 +1,8 @@
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/message_list"
+    android:name="net.ronmichael.trial.view.MessageListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MessageListActivity"
+    tools:layout="@android:layout/list_content" />
