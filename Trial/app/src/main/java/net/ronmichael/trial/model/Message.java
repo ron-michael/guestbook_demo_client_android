@@ -119,8 +119,13 @@ public class Message implements Serializable {
         JSONObject json = new JSONObject();
         setValue(json, "name", name);
         setValue(json, "message", message);
-        setValue(json, "photo", photo);
-        setValue(json, "id", id);
+
+        if (photo != null && photo.trim().length() > 0) {
+            setValue(json, "photo", photo);
+        }
+        if (id != null && id.trim().length() > 0) {
+            setValue(json, "id", id);
+        }
 
         return json;
     }

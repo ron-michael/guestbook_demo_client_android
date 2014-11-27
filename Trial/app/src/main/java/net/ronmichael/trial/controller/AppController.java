@@ -27,8 +27,10 @@ import com.android.volley.toolbox.Volley;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.ronmichael.trial.model.Message;
 import net.ronmichael.trial.util.BroadcastUtil;
@@ -134,12 +136,11 @@ public class AppController extends Application {
     }
 
     /**
-     * Fetched the catalog data from the server.
+     * Fetched the message data from the server.
      */
-    public synchronized boolean requestMessages(Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public synchronized boolean requestMessages() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String url = "http://" + preferences.getString("setting_server_url", DEFAULT_HOST) + URL;
-
         Log.d("TRACE", ">>>>>>>>>>> " + url);
 
         JsonObjectRequest request =
@@ -147,16 +148,8 @@ public class AppController extends Application {
                     url, null,
                     (new Response.Listener<JSONObject>() {
 
-                        Response.Listener<JSONObject> mListener;
-
-                        public Response.Listener<JSONObject> init(Response.Listener<JSONObject> listener) {
-                            mListener = listener;
-                            return this;
-                        }
-
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.d("TRACE", ">>>>>>>>>>> onResponse");
                             if (response == null) {
                                 return;
                             }
@@ -182,7 +175,6 @@ public class AppController extends Application {
                                 JSONObject contents = json.optJSONObject(key);
 
                                 if (contents != null) {
-                                    Log.d("TRACE", key);
                                     message.assign(contents);
                                     list.add(message);
                                 }
@@ -191,27 +183,74 @@ public class AppController extends Application {
 
                             mMessages.addAll(list);
                             BroadcastUtil.broadcastInternalEvent(getApplicationContext(), EVENT_MESSAGES_FETCHED);
-
-                            mListener.onResponse(response);
                         }
-                    }).init(listener),
+                    }),
 
                     (new Response.ErrorListener() {
 
-                        Response.ErrorListener mListener;
-
-                        public Response.ErrorListener init(Response.ErrorListener listener) {
-                            mListener = listener;
-                            return this;
-                        }
-
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("TRACE", ">>>>>>>>>>> onErrorResponse");
-                            mListener.onErrorResponse(error);
                         }
-                    }).init(errorListener)
+                    })
                 );
+
+        // Adding request to request queue
+        addToRequestQueue(request, "tag");
+
+        return false;
+    }
+
+    /**
+     * Saves message data unto the server.
+     */
+    public synchronized boolean saveMessage(Message message) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String url = "http://" + preferences.getString("setting_server_url", DEFAULT_HOST) + URL;
+
+        Log.d("TRACE", ">>>>>>>>>>> " + url);
+
+        JsonObjectRequest request =
+                (new JsonObjectRequest(Request.Method.POST,
+                        url, null,
+                        (new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                if (response == null) {
+                                    return;
+                                }
+
+                                Log.d("TRACE", ">>>>>>>>>>>>>>>>>>> " + response.toString());
+                                requestMessages();
+                            }
+                        }),
+
+                        (new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("TRACE", ">>>>>>>>>>>>>>>>>>> " + error.getMessage());
+                            }
+                        })
+                ) {
+
+                    Message mMessage;
+
+                    public JsonObjectRequest init(Message message) {
+                        mMessage = message;
+                        return this;
+                    }
+
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<String, String>();
+                        Log.d("TRACE", ">>>>>>>>>>>>>> " + mMessage.toJson().toString());
+                        params.put("guest", mMessage.toJson().toString());
+
+                        return  params;
+                    }
+
+                }).init(message);
 
         // Adding request to request queue
         addToRequestQueue(request, "tag");

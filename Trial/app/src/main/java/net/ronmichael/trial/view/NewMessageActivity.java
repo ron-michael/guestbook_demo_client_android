@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import net.ronmichael.trial.R;
+import net.ronmichael.trial.model.Message;
 import net.ronmichael.trial.util.AssortedUtil;
 
 import java.io.FileNotFoundException;
@@ -79,12 +81,24 @@ public class NewMessageActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                SettingsActivity.launch(this);
+                return true;
+
+            case R.id.action_save:
+                String name = ((EditText)findViewById(R.id.name)).getText().toString();
+                String message = ((EditText)findViewById(R.id.message_detail)).getText().toString();
+                Message messageObject = new Message("", name, message, "");
+
+                Log.d("TRACE", ">>>>>>>>>>>>>> " + messageObject.toJson().toString());
+                ViewLogicFacade.getInstance().triggerSavingOfMessageToServer(this, messageObject);
+
+                return true;
+
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

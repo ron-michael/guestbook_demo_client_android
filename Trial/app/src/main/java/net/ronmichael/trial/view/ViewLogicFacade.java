@@ -68,11 +68,7 @@ public class ViewLogicFacade {
      *
      * @param context calling context
      */
-    public synchronized boolean triggerProcessingOfMessagesFromServer(Context context,
-              Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-
-        Log.d("TRACE", ">>>>>>>>>>>>>>>>triggerProcessingOfMessagesFromServer");
-
+    public synchronized boolean triggerProcessingOfMessagesFromServer(Context context) {
         if (isRequestMessageOngoing()) {
             //return false;
         }
@@ -88,23 +84,27 @@ public class ViewLogicFacade {
             return false;
         }
 
-        Log.d("TRACE", ">>>>>>>>>>>>>>>>triggerProcessingOfMessagesFromServer");
-        AppController.getInstance().requestMessages(
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //pDialog.hide();
-                    }
-                },
+        AppController.getInstance().requestMessages();
+        return true;
+    }
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // hide the progress dialog
-                        //pDialog.hide();
-                    }
-                }
-        );
+    public synchronized boolean triggerSavingOfMessageToServer(Context context, Message message) {
+
+        Log.d("TRACE", ">>>>>>>>>>>>>>>>triggerSavingOfMessageToServer");
+
+        if (! AssortedUtil.isNetworkAvailable(context)) {
+            Resources res =  context.getResources();
+
+            AssortedUtil.showMessageDialog(context,
+                    res.getString(R.string.notification_network_none_title),
+                    res.getString(R.string.notification_network_none_message), null);
+            //Toast.makeText(context, res.getString(R.string.notification_network_none_message),
+            //        Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        Log.d("TRACE", ">>>>>>>>>>>>>>>>triggerSavingOfMessageToServer");
+        AppController.getInstance().saveMessage(message);
         return true;
     }
 

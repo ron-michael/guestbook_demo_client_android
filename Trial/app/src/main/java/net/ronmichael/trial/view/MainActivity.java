@@ -136,23 +136,7 @@ public class MainActivity extends Activity
         //pDialog.setMessage("Loading...");
         //pDialog.show();
 
-        ViewLogicFacade.getInstance().triggerProcessingOfMessagesFromServer(
-                this,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //pDialog.hide();
-                    }
-                },
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // hide the progress dialog
-                        //pDialog.hide();
-                    }
-                }
-        );
+        ViewLogicFacade.getInstance().triggerProcessingOfMessagesFromServer(this);
 
     }
 
